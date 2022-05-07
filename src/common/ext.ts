@@ -20,12 +20,14 @@ export const Mirror: new<T>(obj: T) => _Mirror<T> & T = _Mirror as any
 export type Mirror<T> = _Mirror<T> & T
 
 
-interface KeyFunc<T> { (obj: T): any }
+interface KeyFunc<T> { (item: T): any }
+interface ConditionFunc<T> { (item: T): boolean}
 declare global {
     interface Array<T> {
         minBy(key: KeyFunc<T>): Nullable<T>
         maxBy(key: KeyFunc<T>): Nullable<T>
         sortBy(key: KeyFunc<T>): Array<T>
+        count(condition: ConditionFunc<T>): number
     }
 }
 Array.prototype.minBy = function <T>(this: Array<T>, key: KeyFunc<T>) {
@@ -40,6 +42,11 @@ Array.prototype.sortBy = function <T>(this: Array<T>, key: KeyFunc<T>) {
     return this.sort((a, b) => {
         return key(a) < key(b) ? -1 : 1
     })
+}
+Array.prototype.count = function <T>(this: Array<T>, condition: ConditionFunc<T>) {
+    let count = 0
+    this.forEach(it => condition(it) && count++)
+    return count
 }
 
 

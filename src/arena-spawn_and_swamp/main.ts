@@ -1,6 +1,6 @@
 import {Newable} from "common/types";
 import {Game} from "./unit";
-import {Farmer, Ranger} from "./units/professions"
+import {Worker, Ranger} from "./units/professions"
 import {getCpuTime} from "game/utils";
 import {arenaInfo} from "game";
 
@@ -19,10 +19,10 @@ export function runCreeps(
 // noinspection JSUnusedGlobalSymbols
 export function loop() {
     Game.refresh()
-    runCreeps(Farmer, Ranger)
+    runCreeps(Worker, Ranger)
 
-    if (Farmer.units().length < 3) {
-        Farmer.spawn()
+    if (Worker.units().length < 3) {
+        Worker.spawn()
     } else {
         Ranger.spawn()
     }

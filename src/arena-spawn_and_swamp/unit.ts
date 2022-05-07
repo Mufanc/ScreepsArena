@@ -1,9 +1,10 @@
-import {Mirror} from "common/ext";
-import {BodyParts, lazy} from "common/utils";
+import { Mirror } from "common/ext";
+import { BodyParts, lazy } from "common/utils";
+import { Constructor } from "common/types";
 
 import * as co from "game/constants"
 import { Creep, StructureSpawn } from "game/prototypes";
-import { getObjectsByPrototype } from "game/utils";
+import { getObjectsByPrototype, getTicks } from "game/utils";
 
 export class Game {
     static mCreeps: Creep[]
@@ -55,18 +56,11 @@ Object.defineProperty(
 )
 
 
-interface UnitConstructor {
-    new(...args: any[]): {
-        action(ignored: number): void
-    }
-    spawn<T>(this: new(creep: Creep) => T): T | number
-    units<T>(this: new(creep: Creep) => T): T[]
-}
-
-
 export function Unit(signature: string) {
-    return class extends Mirror<Creep> {
+    return class Unit extends Mirror<Creep> {
+        // noinspection JSUnusedGlobalSymbols
         action(ignored: number) { throw new Error("Stub!") }
+
         static spawn<T>(this: new(creep: Creep) => T): T | number {
             let result = Game.mSpawn.spawnCreep(BodyParts(signature))
             if (result.object) {
@@ -75,8 +69,16 @@ export function Unit(signature: string) {
                 return result.error!
             }
         }
-        static units<T>(this: new(creep: Creep) => T): T[] {
-            return Game.mCreeps.filter(it => it.signature == signature).map(it => new this(it))
+
+        private static $cache = new Map<any, [number, any]>()  // Map<Unit, [ getTicks(), ...units ]>
+        static units<T extends Constructor<Unit>>(this: T): (T & Creep)[] {
+            let cache = Unit.$cache.get(this)
+            if (cache && cache[0] == getTicks()) {
+                return cache[1]
+            }
+            let result: any = Game.mCreeps.filter(it => it.signature == signature).map(it => new this(it))
+            Unit.$cache.set(this, [getTicks(), result])
+            return result
         }
     }
 }
