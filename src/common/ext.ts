@@ -71,7 +71,7 @@ Creep.prototype.nextTo = function (this: Creep, target, position) {
 
 declare module "game/prototypes" {
     interface GameObject {
-        unitTo(target: RoomPosition): RoomPosition
+        unitTo(target: RoomPosition, inverse: boolean): RoomPosition
     }
 }
 function unitTo(this: GameObject, target: RoomPosition, inverse = false) {

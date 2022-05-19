@@ -5,7 +5,7 @@ import { getObjectsByPrototype } from "game/utils";
 import { Creep, Structure, StructureContainer } from "game/prototypes";
 
 
-export class Worker extends Unit('MCMC') {
+export class Worker extends Unit('MC2') {
     static initialEnergy = true  // 初始 3 个 Container 还有能量
     static sources(): StructureContainer[] {
         return getObjectsByPrototype(StructureContainer)

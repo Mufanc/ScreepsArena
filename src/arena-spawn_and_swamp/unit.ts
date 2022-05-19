@@ -7,7 +7,7 @@ import { Creep, StructureSpawn } from "game/prototypes";
 import { getObjectsByPrototype, getTicks } from "game/utils";
 
 export class Game {
-    static mCreeps: Creep[]
+    static mCreeps: Creep[]; static eCreeps: Creep[]
 
     @lazy(() => getObjectsByPrototype(StructureSpawn).find(it => it.my))
     static mSpawn: StructureSpawn;
@@ -16,6 +16,7 @@ export class Game {
     static eSpawn: StructureSpawn;
     static refresh() {
         this.mCreeps = getObjectsByPrototype(Creep).filter(it => it.my)
+        this.eCreeps = getObjectsByPrototype(Creep).filter(it => !it.my)
     }
 }
 
